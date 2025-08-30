@@ -33,6 +33,7 @@ class AppStrings {
 
   // Discover Screen
   static const String discover = 'Discover';
+  static const String findMoviesTvSeriesAndMore = 'Find Movies, Tv series, and more...';
   static const String all = 'All';
   static const String movies = 'Movies';
   static const String tvShows = 'TV Shows';

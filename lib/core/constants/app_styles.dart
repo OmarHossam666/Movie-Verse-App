@@ -12,7 +12,7 @@ class AppStyles {
     fontFamily: fontFamily,
     fontSize: 32.sp,
     fontWeight: FontWeight.bold,
-    color: AppColors.primaryText,
+    color: AppColors.primaryAccent,
     letterSpacing: 1.2.w,
   );
 
@@ -42,7 +42,7 @@ class AppStyles {
 
   static TextStyle get sectionHeader => TextStyle(
     fontFamily: fontFamily,
-    fontSize: 20.sp,
+    fontSize: 24.sp,
     fontWeight: FontWeight.bold,
     color: AppColors.primaryText,
     letterSpacing: 1.0.w,
@@ -107,7 +107,7 @@ class AppStyles {
 
   static TextStyle get tabTextActive => TextStyle(
     fontFamily: fontFamily,
-    fontSize: 16.sp,
+    fontSize: 18.sp,
     fontWeight: FontWeight.bold,
     color: AppColors.activeTab,
     letterSpacing: 0.5.w,
@@ -115,7 +115,7 @@ class AppStyles {
 
   static TextStyle get tabTextInactive => TextStyle(
     fontFamily: fontFamily,
-    fontSize: 16.sp,
+    fontSize: 18.sp,
     fontWeight: FontWeight.w500,
     color: AppColors.inactiveTab,
     letterSpacing: 0.3.w,
@@ -236,7 +236,30 @@ class AppStyles {
   static InputDecoration get searchInputDecoration => InputDecoration(
     hintText: 'Search...',
     hintStyle: searchPlaceholder,
-    border: InputBorder.none,
+    hoverColor: AppColors.primaryBackground,
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20.r),
+      borderSide: BorderSide(width: 1.w, color: AppColors.searchBorder),
+    ),
+    disabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20.r),
+      borderSide: BorderSide(width: 1.w, color: AppColors.searchBorder),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20.r),
+      borderSide: BorderSide(width: 2.w, color: AppColors.searchBorder),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20.r),
+      borderSide: BorderSide(width: 1.w, color: AppColors.error),
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20.r),
+      borderSide: BorderSide(width: 2.w, color: AppColors.error),
+    ),
+    focusColor: AppColors.searchBorder,
+    fillColor: AppColors.searchBackground,
+    filled: true,
     contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
     prefixIcon: Icon(
       Icons.search,
@@ -250,7 +273,7 @@ class AppStyles {
     backgroundColor: AppColors.transparent,
     elevation: 0,
     centerTitle: false,
-    titleTextStyle: movieTitleLarge,
+    titleTextStyle: heroTitle,
     iconTheme: IconThemeData(color: AppColors.primaryText, size: 24.sp),
   );
 
@@ -264,13 +287,13 @@ class AppStyles {
         elevation: 0,
         selectedLabelStyle: TextStyle(
           fontFamily: fontFamily,
-          fontSize: 14.sp,
+          fontSize: 18.sp,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.2.w,
         ),
         unselectedLabelStyle: TextStyle(
           fontFamily: fontFamily,
-          fontSize: 12.sp,
+          fontSize: 16.sp,
           fontWeight: FontWeight.normal,
           letterSpacing: 0.1.w,
         ),
@@ -326,10 +349,12 @@ class AppStyles {
   static double get iconXLarge => 32.sp;
 
   // Movie Card Dimensions
-  static double get movieCardWidth => 160.w;
-  static double get movieCardHeight => 240.h;
-  static double get movieCardSmallWidth => 120.w;
-  static double get movieCardSmallHeight => 180.h;
+  static double get movieCardLargeWidth => 260.w;
+  static double get movieCardLargeHeight => 340.h;
+  static double get movieCardMediumWidth => 155.w;
+  static double get movieCardMediumHeight => 185.h;
+  static double get movieCardSmallWidth => 150.w;
+  static double get movieCardSmallHeight => 160.h;
 
   // Continue Watching Card
   static double get continueWatchingHeight => 200.h;
