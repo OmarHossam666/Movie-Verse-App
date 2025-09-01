@@ -8,6 +8,7 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
     : _movieRepository = movieRepository,
       super(const MovieState()) {
     on<LoadAllMovies>(_onLoadAllMovies);
+    on<LoadTrendingMovies>(_onLoadTrendingMovies);
     on<LoadNowPlayingMovies>(_onLoadNowPlayingMovies);
     on<LoadPopularMovies>(_onLoadPopularMovies);
     on<LoadTopRatedMovies>(_onLoadTopRatedMovies);
@@ -22,11 +23,19 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
     Emitter<MovieState> emit,
   ) async {
     await Future.wait([
+      _loadTrendingMovies(emit),
       _loadNowPlayingMovies(emit),
       _loadPopularMovies(emit),
       _loadTopRatedMovies(emit),
       _loadUpcomingMovies(emit),
     ]);
+  }
+
+  Future<void> _onLoadTrendingMovies(
+    LoadTrendingMovies event,
+    Emitter<MovieState> emit,
+  ) async {
+    await _loadTrendingMovies(emit);
   }
 
   Future<void> _onLoadNowPlayingMovies(
@@ -63,6 +72,7 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
   ) async {
     emit(
       state.copyWith(
+        trendingStatus: MovieStatus.loading,
         nowPlayingStatus: MovieStatus.loading,
         popularStatus: MovieStatus.loading,
         topRatedStatus: MovieStatus.loading,
@@ -71,11 +81,41 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
     );
 
     await Future.wait([
+      _loadTrendingMovies(emit, forceRefresh: true),
       _loadNowPlayingMovies(emit, forceRefresh: true),
       _loadPopularMovies(emit, forceRefresh: true),
       _loadTopRatedMovies(emit, forceRefresh: true),
       _loadUpcomingMovies(emit, forceRefresh: true),
     ]);
+  }
+
+  Future<void> _loadTrendingMovies(
+    Emitter<MovieState> emit, {
+    bool forceRefresh = false,
+  }) async {
+    if (state.trendingStatus != MovieStatus.loading) {
+      emit(state.copyWith(trendingStatus: MovieStatus.loading));
+    }
+
+    try {
+      final response = await _movieRepository.getTrendingMovies(
+        forceRefresh: forceRefresh,
+      );
+      emit(
+        state.copyWith(
+          trendingStatus: MovieStatus.success,
+          trendingMovies: response.results,
+          trendingError: null,
+        ),
+      );
+    } catch (error) {
+      emit(
+        state.copyWith(
+          trendingStatus: MovieStatus.failure,
+          trendingError: error.toString(),
+        ),
+      );
+    }
   }
 
   Future<void> _loadNowPlayingMovies(

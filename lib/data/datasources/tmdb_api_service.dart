@@ -110,7 +110,7 @@ class TMDBApiService {
 
   Future<PaginatedMovieResponse> getTrendingMovies({
     int page = 1,
-    String timeWindow = 'day', // it take day or week only
+    String timeWindow = 'day', // it takes day or week only
   }) async {
     try {
       final response = await _dio.get(
@@ -124,7 +124,6 @@ class TMDBApiService {
     }
   }
 
-  // This function should be modified if I want to implement live search functionality
   Future<PaginatedMovieResponse> searchMovies({
     required String query,
     int page = 1,

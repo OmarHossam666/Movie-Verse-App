@@ -11,6 +11,10 @@ class LoadAllMovies extends MovieEvent {
   const LoadAllMovies();
 }
 
+class LoadTrendingMovies extends MovieEvent {
+  const LoadTrendingMovies();
+}
+
 class LoadNowPlayingMovies extends MovieEvent {
   const LoadNowPlayingMovies();
 }

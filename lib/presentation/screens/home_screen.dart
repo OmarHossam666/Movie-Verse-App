@@ -46,6 +46,18 @@ class HomeView extends StatelessWidget {
                 spacing: 24.h,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Trending Section
+                  MovieSection(
+                    title: AppStrings.trending,
+                    movies: state.trendingMovies,
+                    status: state.trendingStatus,
+                    error: state.trendingError,
+                    onRetry: () => context.read<MovieBloc>().add(
+                      const LoadTrendingMovies(),
+                    ),
+                    size: MovieCardSize.large,
+                  ),
+
                   // Now Playing Section
                   MovieSection(
                     title: AppStrings.nowPlaying,
@@ -55,7 +67,7 @@ class HomeView extends StatelessWidget {
                     onRetry: () => context.read<MovieBloc>().add(
                       const LoadNowPlayingMovies(),
                     ),
-                    size: MovieCardSize.large,
+                    size: MovieCardSize.medium,
                   ),
 
                   // Popular Section
@@ -79,7 +91,7 @@ class HomeView extends StatelessWidget {
                     onRetry: () => context.read<MovieBloc>().add(
                       const LoadTopRatedMovies(),
                     ),
-                    size: MovieCardSize.small,
+                    size: MovieCardSize.medium,
                   ),
 
                   // Upcoming Section
@@ -91,7 +103,7 @@ class HomeView extends StatelessWidget {
                     onRetry: () => context.read<MovieBloc>().add(
                       const LoadUpcomingMovies(),
                     ),
-                    size: MovieCardSize.medium,
+                    size: MovieCardSize.large,
                   ),
                 ],
               ),
