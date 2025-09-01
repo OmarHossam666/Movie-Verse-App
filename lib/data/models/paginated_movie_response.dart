@@ -16,7 +16,7 @@ class PaginatedMovieResponse {
 
   final List<Movie> results;
 
-  @JsonKey(name: 'total_page')
+  @JsonKey(name: 'total_pages')
   final int totalPages;
 
   @JsonKey(name: 'total_results')

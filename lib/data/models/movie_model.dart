@@ -8,13 +8,13 @@ class Movie {
   Movie({
     required this.id,
     required this.title,
-    required this.overview,
-    required this.posterPath,
-    required this.backdropPath,
-    required this.releaseDate,
-    required this.voteAverage,
+    this.overview,
+    this.posterPath,
+    this.backdropPath,
+    this.releaseDate,
+    this.voteAverage,
     required this.voteCount,
-    required this.popularity,
+    this.popularity,
     required this.genreIds,
     required this.isAdult,
     required this.originalLanguage,
@@ -24,7 +24,7 @@ class Movie {
 
   final int id;
   final String title;
-  final String overview;
+  final String? overview;
 
   @JsonKey(name: 'poster_path')
   final String? posterPath;
@@ -36,12 +36,12 @@ class Movie {
   final String? releaseDate;
 
   @JsonKey(name: 'vote_average')
-  final double voteAverage;
+  final double? voteAverage;
 
   @JsonKey(name: 'vote_count')
   final int voteCount;
 
-  final double popularity;
+  final double? popularity;
 
   @JsonKey(name: 'genre_ids')
   final List<int> genreIds;

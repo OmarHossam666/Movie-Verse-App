@@ -66,7 +66,7 @@ class AppStyles {
 
   static TextStyle get bodyText => TextStyle(
     fontFamily: fontFamily,
-    fontSize: 14.sp,
+    fontSize: 18.sp,
     fontWeight: FontWeight.normal,
     color: AppColors.secondaryText,
     letterSpacing: 0.2.w,
@@ -75,7 +75,7 @@ class AppStyles {
 
   static TextStyle get detailText => TextStyle(
     fontFamily: fontFamily,
-    fontSize: 12.sp,
+    fontSize: 16.sp,
     fontWeight: FontWeight.normal,
     color: AppColors.tertiaryText,
     letterSpacing: 0.1.w,
@@ -83,7 +83,7 @@ class AppStyles {
 
   static TextStyle get ratingText => TextStyle(
     fontFamily: fontFamily,
-    fontSize: 14.sp,
+    fontSize: 18.sp,
     fontWeight: FontWeight.bold,
     color: AppColors.primaryText,
     letterSpacing: 0.2.w,
@@ -123,7 +123,7 @@ class AppStyles {
 
   static TextStyle get searchPlaceholder => TextStyle(
     fontFamily: fontFamily,
-    fontSize: 16.sp,
+    fontSize: 18.sp,
     fontWeight: FontWeight.normal,
     color: AppColors.placeholderText,
     letterSpacing: 0.2.w,
@@ -140,7 +140,7 @@ class AppStyles {
 
   static TextStyle get labelText => TextStyle(
     fontFamily: fontFamily,
-    fontSize: 14.sp,
+    fontSize: 16.sp,
     fontWeight: FontWeight.w600,
     color: AppColors.secondaryText,
     letterSpacing: 0.4.w,
@@ -148,7 +148,7 @@ class AppStyles {
 
   static TextStyle get valueText => TextStyle(
     fontFamily: fontFamily,
-    fontSize: 14.sp,
+    fontSize: 18.sp,
     fontWeight: FontWeight.normal,
     color: AppColors.primaryText,
     letterSpacing: 0.1.w,
@@ -264,7 +264,7 @@ class AppStyles {
     prefixIcon: Icon(
       Icons.search,
       color: AppColors.placeholderText,
-      size: 20.sp,
+      size: iconLarge,
     ),
   );
 
@@ -348,13 +348,31 @@ class AppStyles {
   static double get iconLarge => 24.sp;
   static double get iconXLarge => 32.sp;
 
-  // Movie Card Dimensions
-  static double get movieCardLargeWidth => 260.w;
-  static double get movieCardLargeHeight => 340.h;
-  static double get movieCardMediumWidth => 155.w;
-  static double get movieCardMediumHeight => 185.h;
-  static double get movieCardSmallWidth => 150.w;
-  static double get movieCardSmallHeight => 160.h;
+  // Movie Card Dimensions - Optimized for different screen sizes and use cases
+  // Standard movie poster aspect ratio: 2:3 (0.67)
+
+  // Small Cards - For compact sections (Top Rated, etc.)
+  static double get movieCardSmallWidth => 140.w;
+  static double get movieCardSmallHeight => 210.h; // 2:3 ratio
+
+  // Medium Cards - For main content sections (Popular, Upcoming)
+  static double get movieCardMediumWidth => 160.w;
+  static double get movieCardMediumHeight => 240.h; // 2:3 ratio
+
+  // Large Cards - For featured content (Now Playing)
+  static double get movieCardLargeWidth => 200.w;
+  static double get movieCardLargeHeight => 300.h; // 2:3 ratio
+
+  // Card Heights with Details Section (poster + info)
+  static double get movieCardWithDetailsSmall => movieCardSmallHeight + 60.h;
+  static double get movieCardWithDetailsMedium => movieCardMediumHeight + 70.h;
+  static double get movieCardWithDetailsLarge => movieCardLargeHeight + 80.h;
+
+  // Responsive Card Dimensions - Based on screen width percentage
+  static double get movieCardResponsiveSmall => 0.32.sw; // ~32% of screen width
+  static double get movieCardResponsiveMedium =>
+      0.38.sw; // ~38% of screen width
+  static double get movieCardResponsiveLarge => 0.48.sw; // ~48% of screen width
 
   // Continue Watching Card
   static double get continueWatchingHeight => 200.h;
@@ -377,4 +395,110 @@ class AppStyles {
   static double get navigationBarHeight => 84.h;
   static EdgeInsets get navigationBarPadding =>
       EdgeInsets.symmetric(vertical: 8.h);
+
+  // Movie Card Helper Methods
+
+  /// Returns optimized card dimensions based on size and screen constraints
+  static ({double width, double height}) getMovieCardDimensions({
+    required String size,
+    bool withDetails = true,
+    bool responsive = false,
+  }) {
+    if (responsive) {
+      return switch (size.toLowerCase()) {
+        'small' => (
+          width: movieCardResponsiveSmall,
+          height: movieCardResponsiveSmall * 1.5 + (withDetails ? 60.h : 0),
+        ),
+        'medium' => (
+          width: movieCardResponsiveMedium,
+          height: movieCardResponsiveMedium * 1.5 + (withDetails ? 70.h : 0),
+        ),
+        'large' => (
+          width: movieCardResponsiveLarge,
+          height: movieCardResponsiveLarge * 1.5 + (withDetails ? 80.h : 0),
+        ),
+        _ => (
+          width: movieCardResponsiveMedium,
+          height: movieCardResponsiveMedium * 1.5 + (withDetails ? 70.h : 0),
+        ),
+      };
+    }
+
+    return switch (size.toLowerCase()) {
+      'small' => (
+        width: movieCardSmallWidth,
+        height: withDetails ? movieCardWithDetailsSmall : movieCardSmallHeight,
+      ),
+      'medium' => (
+        width: movieCardMediumWidth,
+        height: withDetails
+            ? movieCardWithDetailsMedium
+            : movieCardMediumHeight,
+      ),
+      'large' => (
+        width: movieCardLargeWidth,
+        height: withDetails ? movieCardWithDetailsLarge : movieCardLargeHeight,
+      ),
+      _ => (
+        width: movieCardMediumWidth,
+        height: withDetails
+            ? movieCardWithDetailsMedium
+            : movieCardMediumHeight,
+      ),
+    };
+  }
+
+  /// Returns appropriate poster size for TMDB API based on card width
+  static String getPosterSizeForWidth(double width) {
+    if (width <= 140.0) return 'w200';
+    if (width <= 160.0) return 'w300';
+    if (width <= 200.0) return 'w500';
+    return 'w780';
+  }
+
+  /// Returns optimized cache dimensions for image loading
+  static ({int width, int height}) getCacheDimensions(double cardWidth) {
+    final cacheWidth = switch (cardWidth) {
+      <= 140.0 => 200,
+      <= 160.0 => 300,
+      <= 200.0 => 500,
+      _ => 780,
+    };
+    return (width: cacheWidth, height: (cacheWidth * 1.5).round());
+  }
+
+  /// Movie Card Spacing and Layout
+  static EdgeInsets get movieCardPadding => EdgeInsets.all(8.w);
+  static EdgeInsets get movieCardMargin => EdgeInsets.only(right: 12.w);
+  static EdgeInsets get movieCardContentPadding => EdgeInsets.all(12.w);
+
+  /// Movie Card Border Radius by Size
+  static BorderRadius getMovieCardRadius(String size) {
+    return switch (size.toLowerCase()) {
+      'small' => BorderRadius.circular(10.r),
+      'medium' => BorderRadius.circular(12.r),
+      'large' => BorderRadius.circular(16.r),
+      _ => BorderRadius.circular(12.r),
+    };
+  }
+
+  /// Movie Card Shadow by Size
+  static List<BoxShadow> getMovieCardShadow(String size) {
+    final elevation = switch (size.toLowerCase()) {
+      'small' => 4.0,
+      'medium' => 6.0,
+      'large' => 8.0,
+      _ => 6.0,
+    };
+
+    return [
+      BoxShadow(
+        color: AppColors.cardShadow,
+        blurRadius: elevation,
+        offset: Offset(0, elevation / 2),
+        spreadRadius: 0,
+      ),
+    ];
+  }
 }

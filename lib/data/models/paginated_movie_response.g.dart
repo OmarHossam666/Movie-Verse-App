@@ -13,7 +13,7 @@ PaginatedMovieResponse _$PaginatedMovieResponseFromJson(
   results: (json['results'] as List<dynamic>)
       .map((e) => Movie.fromJson(e as Map<String, dynamic>))
       .toList(),
-  totalPages: (json['total_page'] as num).toInt(),
+  totalPages: (json['total_pages'] as num).toInt(),
   totalResults: (json['total_results'] as num).toInt(),
 );
 
@@ -22,6 +22,6 @@ Map<String, dynamic> _$PaginatedMovieResponseToJson(
 ) => <String, dynamic>{
   'page': instance.page,
   'results': instance.results,
-  'total_page': instance.totalPages,
+  'total_pages': instance.totalPages,
   'total_results': instance.totalResults,
 };

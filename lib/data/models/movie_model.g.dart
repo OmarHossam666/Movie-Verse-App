@@ -9,13 +9,13 @@ part of 'movie_model.dart';
 Movie _$MovieFromJson(Map<String, dynamic> json) => Movie(
   id: (json['id'] as num).toInt(),
   title: json['title'] as String,
-  overview: json['overview'] as String,
+  overview: json['overview'] as String?,
   posterPath: json['poster_path'] as String?,
   backdropPath: json['backdrop_path'] as String?,
   releaseDate: json['release_date'] as String?,
-  voteAverage: (json['vote_average'] as num).toDouble(),
+  voteAverage: (json['vote_average'] as num?)?.toDouble(),
   voteCount: (json['vote_count'] as num).toInt(),
-  popularity: (json['popularity'] as num).toDouble(),
+  popularity: (json['popularity'] as num?)?.toDouble(),
   genreIds: (json['genre_ids'] as List<dynamic>)
       .map((e) => (e as num).toInt())
       .toList(),

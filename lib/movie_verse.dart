@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:movie_verse/core/routing/app_router_config.dart';
 import 'package:movie_verse/core/theme/dark_theme.dart';
 import 'package:movie_verse/core/theme/light_theme.dart';
-import 'package:movie_verse/presentation/screens/main_screen.dart';
 
 class MovieVerse extends StatelessWidget {
   const MovieVerse({super.key});
@@ -14,8 +14,8 @@ class MovieVerse extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       ensureScreenSize: true,
-      builder: (context, child) => MaterialApp(
-        home: const MainScreen(),
+      builder: (context, child) => MaterialApp.router(
+        routerConfig: AppRouterConfig.router,
         debugShowCheckedModeBanner: false,
         darkTheme: darkTheme,
         theme: lightTheme,

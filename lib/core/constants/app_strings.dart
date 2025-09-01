@@ -30,6 +30,7 @@ class AppStrings {
   static const String upcoming = 'Upcoming';
   static const String topRated = 'Top Rated';
   static const String popular = 'Popular';
+  static const String trending = 'Trending';
 
   // Discover Screen
   static const String discover = 'Discover';

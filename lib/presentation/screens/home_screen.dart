@@ -1,70 +1,103 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:movie_verse/core/constants/app_assets.dart';
+import 'package:movie_verse/core/constants/app_colors.dart';
 import 'package:movie_verse/core/constants/app_strings.dart';
-import 'package:movie_verse/core/constants/app_styles.dart';
+import 'package:movie_verse/data/datasources/tmdb_api_service.dart';
+import 'package:movie_verse/data/repositories/movie_repository.dart';
+import 'package:movie_verse/presentation/bloc/movie_bloc.dart';
+import 'package:movie_verse/presentation/bloc/movie_event.dart';
+import 'package:movie_verse/presentation/bloc/movie_state.dart';
+import 'package:movie_verse/presentation/widgets/movie_card.dart';
+import 'package:movie_verse/presentation/widgets/movie_section.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) =>
+          MovieBloc(movieRepository: MovieRepository(TMDBApiService()))
+            ..add(const LoadAllMovies()),
+      child: const HomeView(),
+    );
+  }
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class HomeView extends StatelessWidget {
+  const HomeView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(AppStrings.home), centerTitle: true),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: AppStyles.largePadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 24.h,
-              children: [
-                Text(AppStrings.nowPlaying, style: AppStyles.sectionHeader),
-                Container(
-                  width: AppStyles.movieCardLargeWidth,
-                  height: AppStyles.movieCardLargeHeight,
-                  decoration: AppStyles.movieCardDecoration,
-                  child: Image.asset(AppAssets.moviePoster, fit: BoxFit.fill),
-                ),
-                Text(AppStrings.popular, style: AppStyles.sectionHeader),
-                Container(
-                  width: AppStyles.movieCardMediumWidth,
-                  height: AppStyles.movieCardMediumHeight,
-                  decoration: AppStyles.movieCardDecoration,
-                  child: Image.asset(
-                    AppAssets.moviePoster,
-                    fit: BoxFit.fitHeight,
+      body: BlocBuilder<MovieBloc, MovieState>(
+        builder: (context, state) {
+          return RefreshIndicator(
+            color: AppColors.primaryAccent,
+            backgroundColor: AppColors.primaryBackground,
+            onRefresh: () async {
+              context.read<MovieBloc>().add(const RefreshAllMovies());
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                spacing: 24.h,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Now Playing Section
+                  MovieSection(
+                    title: AppStrings.nowPlaying,
+                    movies: state.nowPlayingMovies,
+                    status: state.nowPlayingStatus,
+                    error: state.nowPlayingError,
+                    onRetry: () => context.read<MovieBloc>().add(
+                      const LoadNowPlayingMovies(),
+                    ),
+                    size: MovieCardSize.large,
                   ),
-                ),
-                Text(AppStrings.topRated, style: AppStyles.sectionHeader),
-                Container(
-                  width: AppStyles.movieCardSmallWidth,
-                  height: AppStyles.movieCardSmallHeight,
-                  decoration: AppStyles.movieCardDecoration,
-                  child: Image.asset(
-                    AppAssets.moviePoster,
-                    fit: BoxFit.fitHeight,
+
+                  // Popular Section
+                  MovieSection(
+                    title: AppStrings.popular,
+                    movies: state.popularMovies,
+                    status: state.popularStatus,
+                    error: state.popularError,
+                    onRetry: () => context.read<MovieBloc>().add(
+                      const LoadPopularMovies(),
+                    ),
+                    size: MovieCardSize.medium,
                   ),
-                ),
-                Text(AppStrings.upcoming, style: AppStyles.sectionHeader),
-                Container(
-                  width: AppStyles.movieCardMediumWidth,
-                  height: AppStyles.movieCardMediumHeight,
-                  decoration: AppStyles.movieCardDecoration,
-                  child: Image.asset(
-                    AppAssets.moviePoster,
-                    fit: BoxFit.fitHeight,
+
+                  // Top Rated Section
+                  MovieSection(
+                    title: AppStrings.topRated,
+                    movies: state.topRatedMovies,
+                    status: state.topRatedStatus,
+                    error: state.topRatedError,
+                    onRetry: () => context.read<MovieBloc>().add(
+                      const LoadTopRatedMovies(),
+                    ),
+                    size: MovieCardSize.small,
                   ),
-                ),
-              ],
+
+                  // Upcoming Section
+                  MovieSection(
+                    title: AppStrings.upcoming,
+                    movies: state.upcomingMovies,
+                    status: state.upcomingStatus,
+                    error: state.upcomingError,
+                    onRetry: () => context.read<MovieBloc>().add(
+                      const LoadUpcomingMovies(),
+                    ),
+                    size: MovieCardSize.medium,
+                  ),
+                ],
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

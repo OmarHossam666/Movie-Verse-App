@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:movie_verse/core/error/handle_dio_error.dart';
-import 'package:movie_verse/core/error/tmdb_exception.dart';
 import 'package:movie_verse/data/datasources/tmdb_config.dart';
 import 'package:movie_verse/data/models/paginated_movie_response.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
@@ -30,17 +29,8 @@ class TMDBApiService {
           handler.next(options);
         },
         onError: (error, handler) {
-          if (error.response?.statusCode == 429) {
-            throw TMDBException('Rate limit exceeded. Please try again later.');
-          } else if (error.response?.statusCode == 401) {
-            throw TMDBException('Invalid API key. Please check your API key.');
-          } else if (error.response?.statusCode == 404) {
-            throw TMDBException('The requested resource was not found.');
-          } else {
-            throw TMDBException(
-              'An unexpected error occurred. Please try again later.',
-            );
-          }
+          // Let the error pass through to be handled by the individual methods
+          handler.next(error);
         },
       ),
       if (kDebugMode)
@@ -92,7 +82,7 @@ class TMDBApiService {
   }) async {
     try {
       final response = await _dio.get(
-        'movie/top_rated',
+        '/movie/top_rated',
         queryParameters: {'page': page, 'region': region},
       );
 
@@ -108,7 +98,7 @@ class TMDBApiService {
   }) async {
     try {
       final response = await _dio.get(
-        'movie/upcoming',
+        '/movie/upcoming',
         queryParameters: {'page': page, 'region': region},
       );
 
@@ -120,12 +110,12 @@ class TMDBApiService {
 
   Future<PaginatedMovieResponse> getTrendingMovies({
     int page = 1,
-    String region = 'US',
+    String timeWindow = 'day', // it take day or week only
   }) async {
     try {
       final response = await _dio.get(
-        'movie/trending',
-        queryParameters: {'page': page, 'region': region},
+        '/trending/movie/$timeWindow',
+        queryParameters: {'page': page},
       );
 
       return PaginatedMovieResponse.fromJson(response.data);
@@ -134,7 +124,7 @@ class TMDBApiService {
     }
   }
 
-  // This function should be modified if you want to implement live search functionality
+  // This function should be modified if I want to implement live search functionality
   Future<PaginatedMovieResponse> searchMovies({
     required String query,
     int page = 1,
