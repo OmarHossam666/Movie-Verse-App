@@ -1,6 +1,9 @@
 import 'package:movie_verse/data/datasources/tmdb_api_service.dart';
 import 'package:movie_verse/data/models/cached_data.dart';
 import 'package:movie_verse/data/models/paginated_movie_response.dart';
+import 'package:movie_verse/data/models/movie_model.dart';
+import 'package:movie_verse/data/models/cast_model.dart';
+import 'package:movie_verse/data/models/video_model.dart';
 
 class MovieRepository {
   MovieRepository(this._apiService);
@@ -118,6 +121,18 @@ class MovieRepository {
       year: year,
       includeAdult: includeAdult,
     );
+  }
+
+  Future<Movie> getMovieDetails(int movieId) async {
+    return await _apiService.getMovieDetails(movieId);
+  }
+
+  Future<MovieCredits> getMovieCredits(int movieId) async {
+    return await _apiService.getMovieCredits(movieId);
+  }
+
+  Future<MovieVideos> getMovieVideos(int movieId) async {
+    return await _apiService.getMovieVideos(movieId);
   }
 
   bool _isCacheValid(String cacheKey) {

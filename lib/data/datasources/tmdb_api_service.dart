@@ -3,6 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:movie_verse/core/error/handle_dio_error.dart';
 import 'package:movie_verse/data/datasources/tmdb_config.dart';
 import 'package:movie_verse/data/models/paginated_movie_response.dart';
+import 'package:movie_verse/data/models/movie_model.dart';
+import 'package:movie_verse/data/models/cast_model.dart';
+import 'package:movie_verse/data/models/video_model.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class TMDBApiService {
@@ -147,6 +150,48 @@ class TMDBApiService {
       );
 
       return PaginatedMovieResponse.fromJson(response.data);
+    } on DioException catch (exception) {
+      throw handleDioError(exception);
+    }
+  }
+
+  Future<Movie> getMovieDetails(int movieId) async {
+    try {
+      final response = await _dio.get('/movie/$movieId');
+
+      final genresData = response.data['genres'];
+
+      if (genresData != null) {
+        if (genresData is List) {
+        } else {
+        }
+      } else {
+      }
+
+      try {
+        final movie = Movie.fromJson(response.data);
+        return movie;
+      } catch (e) {
+        rethrow;
+      }
+    } on DioException catch (exception) {
+      throw handleDioError(exception);
+    }
+  }
+
+  Future<MovieCredits> getMovieCredits(int movieId) async {
+    try {
+      final response = await _dio.get('/movie/$movieId/credits');
+      return MovieCredits.fromJson(response.data);
+    } on DioException catch (exception) {
+      throw handleDioError(exception);
+    }
+  }
+
+  Future<MovieVideos> getMovieVideos(int movieId) async {
+    try {
+      final response = await _dio.get('/movie/$movieId/videos');
+      return MovieVideos.fromJson(response.data);
     } on DioException catch (exception) {
       throw handleDioError(exception);
     }

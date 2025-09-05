@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:movie_verse/data/datasources/tmdb_config.dart';
+import 'package:movie_verse/data/models/genre_model.dart';
 
 part 'movie_model.g.dart';
 
@@ -15,7 +16,8 @@ class Movie {
     this.voteAverage,
     required this.voteCount,
     this.popularity,
-    required this.genreIds,
+    this.genreIds,
+    this.genres,
     required this.isAdult,
     required this.originalLanguage,
     required this.originalTitle,
@@ -44,7 +46,10 @@ class Movie {
   final double? popularity;
 
   @JsonKey(name: 'genre_ids')
-  final List<int> genreIds;
+  final List<int>? genreIds;
+
+  // For detailed movie info (when fetching movie details)
+  final List<Genre>? genres;
 
   @JsonKey(name: 'adult')
   final bool isAdult;

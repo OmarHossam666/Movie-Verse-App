@@ -128,7 +128,7 @@ class MovieCard extends StatelessWidget {
             child: Text(
               movie.title,
               style: _getTitleStyle(),
-              maxLines: size == MovieCardSize.small ? 1 : 2,
+              maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
           ),

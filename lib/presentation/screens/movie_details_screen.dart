@@ -1,12 +1,21 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movie_verse/core/constants/app_colors.dart';
 import 'package:movie_verse/core/constants/app_styles.dart';
 import 'package:movie_verse/data/datasources/tmdb_config.dart';
+import 'package:movie_verse/data/datasources/tmdb_api_service.dart';
+import 'package:movie_verse/data/repositories/movie_repository.dart';
 import 'package:movie_verse/data/models/movie_model.dart';
+import 'package:movie_verse/presentation/bloc/movie_details_bloc.dart';
+import 'package:movie_verse/presentation/bloc/movie_details_event.dart';
+import 'package:movie_verse/presentation/bloc/movie_details_state.dart';
 import 'package:movie_verse/presentation/widgets/poster_shimmer.dart';
+import 'package:movie_verse/presentation/widgets/genre_section.dart';
+import 'package:movie_verse/presentation/widgets/cast_section.dart';
+import 'package:movie_verse/presentation/widgets/trailer_section.dart';
 
 class MovieDetailsScreen extends StatelessWidget {
   const MovieDetailsScreen({super.key, required this.movie});
@@ -15,35 +24,80 @@ class MovieDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          // App Bar with Backdrop
-          _buildSliverAppBar(context),
+    return BlocProvider(
+      create: (context) =>
+          MovieDetailsBloc(movieRepository: MovieRepository(TMDBApiService()))
+            ..add(LoadAllMovieDetails(movie.id)),
+      child: Scaffold(
+        body: CustomScrollView(
+          slivers: [
+            // App Bar with Backdrop
+            _buildSliverAppBar(context),
 
-          // Movie Content
-          SliverToBoxAdapter(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Movie Header Section
-                _buildMovieHeader(context),
+            // Movie Content
+            SliverToBoxAdapter(
+              child: BlocBuilder<MovieDetailsBloc, MovieDetailsState>(
+                builder: (context, state) {
+                  final detailedMovie = state.movieDetails ?? movie;
 
-                // Movie Details Section
-                _buildMovieDetails(context),
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Movie Header Section
+                      _buildMovieHeader(context, detailedMovie),
 
-                // Overview Section
-                _buildOverviewSection(context),
+                      // Movie Details Section
+                      _buildMovieDetails(context, detailedMovie),
 
-                // Additional Info Section
-                _buildAdditionalInfoSection(context),
+                      // Genres Section
+                      Builder(
+                        builder: (context) {
+                          return GenreSection(
+                            genres: state.movieDetails?.genres ?? [],
+                            status: state.detailsStatus,
+                            error: state.detailsError,
+                            onRetry: () => context.read<MovieDetailsBloc>().add(
+                              LoadMovieDetails(movie.id),
+                            ),
+                          );
+                        },
+                      ),
 
-                // Bottom Padding
-                SizedBox(height: 32.h),
-              ],
+                      // Overview Section
+                      _buildOverviewSection(context, detailedMovie),
+
+                      // Trailers Section
+                      TrailerSection(
+                        videos: state.movieVideos?.results ?? [],
+                        status: state.videosStatus,
+                        error: state.videosError,
+                        onRetry: () => context.read<MovieDetailsBloc>().add(
+                          LoadMovieVideos(movie.id),
+                        ),
+                      ),
+
+                      // Cast Section
+                      CastSection(
+                        cast: state.movieCredits?.cast ?? [],
+                        status: state.creditsStatus,
+                        error: state.creditsError,
+                        onRetry: () => context.read<MovieDetailsBloc>().add(
+                          LoadMovieCredits(movie.id),
+                        ),
+                      ),
+
+                      // Additional Info Section
+                      _buildAdditionalInfoSection(context, detailedMovie),
+
+                      // Bottom Padding
+                      SizedBox(height: 32.h),
+                    ],
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -135,7 +189,7 @@ class MovieDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMovieHeader(BuildContext context) {
+  Widget _buildMovieHeader(BuildContext context, Movie movie) {
     return Padding(
       padding: AppStyles.horizontalPadding,
       child: Row(
@@ -255,7 +309,7 @@ class MovieDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMovieDetails(BuildContext context) {
+  Widget _buildMovieDetails(BuildContext context, Movie movie) {
     return Padding(
       padding: AppStyles.horizontalPadding,
       child: Column(
@@ -311,7 +365,7 @@ class MovieDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildOverviewSection(BuildContext context) {
+  Widget _buildOverviewSection(BuildContext context, Movie movie) {
     if (movie.overview == null || movie.overview!.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -333,7 +387,7 @@ class MovieDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAdditionalInfoSection(BuildContext context) {
+  Widget _buildAdditionalInfoSection(BuildContext context, Movie movie) {
     return Padding(
       padding: AppStyles.horizontalPadding,
       child: Column(

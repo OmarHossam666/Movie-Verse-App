@@ -7,6 +7,7 @@ import 'package:movie_verse/core/routing/app_routes.dart';
 import 'package:movie_verse/data/models/movie_model.dart';
 import 'package:movie_verse/presentation/screens/main_screen.dart';
 import 'package:movie_verse/presentation/screens/movie_details_screen.dart';
+import 'package:movie_verse/presentation/screens/see_all_screen.dart';
 
 class AppRouterConfig {
   static final GoRouter router = GoRouter(
@@ -25,6 +26,14 @@ class AppRouterConfig {
           return MovieDetailsScreen(movie: movie);
         },
       ),
+      GoRoute(
+        path: AppRoutes.seeAllScreen,
+        name: 'seeAll',
+        builder: (context, state) {
+          final title = state.extra as String;
+          return SeeAllScreen(title: title);
+        },
+      ),
     ],
     errorBuilder: (context, state) => Scaffold(
       body: Center(
@@ -39,7 +48,7 @@ class AppRouterConfig {
             ),
             ElevatedButton(
               onPressed: () => context.go(AppRoutes.homeScreen),
-              child: Text('Go Home', style: AppStyles.movieSubtitle,),
+              child: Text('Go Home', style: AppStyles.movieSubtitle),
             ),
           ],
         ),

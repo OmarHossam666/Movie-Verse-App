@@ -42,7 +42,23 @@ class MovieSection extends StatelessWidget {
         // Section Header
         Padding(
           padding: AppStyles.horizontalPadding,
-          child: Text(title, style: AppStyles.sectionHeader),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(title, style: AppStyles.sectionHeader),
+              if (onSeeAllTap != null)
+                TextButton(
+                  onPressed: onSeeAllTap,
+                  child: Text(
+                    'See All',
+                    style: AppStyles.bodyText.copyWith(
+                      color: AppColors.primaryAccent,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
 
         SizedBox(height: 12.h),

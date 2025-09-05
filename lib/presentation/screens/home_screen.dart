@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:movie_verse/core/constants/app_colors.dart';
 import 'package:movie_verse/core/constants/app_strings.dart';
+import 'package:movie_verse/core/routing/app_routes.dart';
 import 'package:movie_verse/data/datasources/tmdb_api_service.dart';
 import 'package:movie_verse/data/repositories/movie_repository.dart';
 import 'package:movie_verse/presentation/bloc/movie_bloc.dart';
@@ -55,6 +57,10 @@ class HomeView extends StatelessWidget {
                     onRetry: () => context.read<MovieBloc>().add(
                       const LoadTrendingMovies(),
                     ),
+                    onSeeAllTap: () => context.push(
+                      AppRoutes.seeAllScreen,
+                      extra: AppStrings.trending,
+                    ),
                     size: MovieCardSize.large,
                   ),
 
@@ -66,6 +72,10 @@ class HomeView extends StatelessWidget {
                     error: state.nowPlayingError,
                     onRetry: () => context.read<MovieBloc>().add(
                       const LoadNowPlayingMovies(),
+                    ),
+                    onSeeAllTap: () => context.push(
+                      AppRoutes.seeAllScreen,
+                      extra: AppStrings.nowPlaying,
                     ),
                     size: MovieCardSize.medium,
                   ),
@@ -79,6 +89,10 @@ class HomeView extends StatelessWidget {
                     onRetry: () => context.read<MovieBloc>().add(
                       const LoadPopularMovies(),
                     ),
+                    onSeeAllTap: () => context.push(
+                      AppRoutes.seeAllScreen,
+                      extra: AppStrings.popular,
+                    ),
                     size: MovieCardSize.medium,
                   ),
 
@@ -91,6 +105,10 @@ class HomeView extends StatelessWidget {
                     onRetry: () => context.read<MovieBloc>().add(
                       const LoadTopRatedMovies(),
                     ),
+                    onSeeAllTap: () => context.push(
+                      AppRoutes.seeAllScreen,
+                      extra: AppStrings.topRated,
+                    ),
                     size: MovieCardSize.medium,
                   ),
 
@@ -102,6 +120,10 @@ class HomeView extends StatelessWidget {
                     error: state.upcomingError,
                     onRetry: () => context.read<MovieBloc>().add(
                       const LoadUpcomingMovies(),
+                    ),
+                    onSeeAllTap: () => context.push(
+                      AppRoutes.seeAllScreen,
+                      extra: AppStrings.upcoming,
                     ),
                     size: MovieCardSize.large,
                   ),

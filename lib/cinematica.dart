@@ -4,8 +4,8 @@ import 'package:movie_verse/core/routing/app_router_config.dart';
 import 'package:movie_verse/core/theme/dark_theme.dart';
 import 'package:movie_verse/core/theme/light_theme.dart';
 
-class MovieVerse extends StatelessWidget {
-  const MovieVerse({super.key});
+class Cinematica extends StatelessWidget {
+  const Cinematica({super.key});
 
   @override
   Widget build(BuildContext context) {
